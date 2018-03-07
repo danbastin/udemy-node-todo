@@ -8,15 +8,10 @@ MongoClient.connect('mongodb://localhost:27017/todo-api', (err, client) => {
   console.log('Connected to Mongo Server');
   const db = client.db('todo-api');
 
-  // db.collection('Todos').deleteMany({text: 'Eat Lunch'}).then((res) => {
-  //   console.log(res);
-  // });
-
-  // db.collection('Todos').deleteOne({text: 'Something to do'}).then((res) => {
-  //   console.log(res);
-  // });
-
-  // findOneAndDelete - returns deleted object
+  db.collection('Todos').findOneAndUpdate({text: 'Something to do'}, { $set: {completed: true}}, { returnOriginal: false })
+  .then((res) => {
+    console.log(res);
+  });
 
   // client.close();
 });
