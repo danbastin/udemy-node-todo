@@ -1,10 +1,12 @@
 const expect = require('expect');
 const request = require('supertest');
+const {ObjectID} = require('mongodb');
 
 const {app} = require('./../server');
 const {Todo} = require('./../db/models/todo');
 
 const todos = [{
+  _id: new ObjectID(),
   text: 'First one'
 }, {
   text: 'Second one'
@@ -71,5 +73,39 @@ describe('GET /todos', () => {
       })
       .end(done);
   });
+
+});
+
+describe('GET /todos/:id', ()=> {
+
+  it('fails on invalid id', (done) => {
+    var testId = new ObjectID().toString();
+    testId += '11';
+    request(app)
+      .get(`/todos/${testId}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it('fails on id not found', (done) => {
+    const testId = new ObjectID().toString();
+
+    request(app)
+      .get(`/todos/${testId}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it('finds by id', (done) => {
+    const id = todos[0]._id.toString();
+
+    request(app)
+      .get(`/todos/${id}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body._id).toBe(id);
+      })
+      .end(done);
+  })
 
 });
